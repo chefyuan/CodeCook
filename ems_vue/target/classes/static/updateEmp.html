@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>update Emp</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css"
+			href="css/style.css" />
+	</head>
+
+	<body>
+		<div id="wrap">
+			<div id="top_content">
+				<div id="header">
+					<div id="rightheader">
+						<p>
+							2009/11/20
+							<br />
+							<a href="javascript:;" @click = "logout">安全退出</a>
+						</p>
+					</div>
+					<div id="topheader">
+						<h1 id="title">
+							<a href="#">main</a>
+						</h1>
+					</div>
+					<div id="navigation">
+					</div>
+				</div>
+				<div id="content">
+					<p id="whereami">
+					</p>
+					<h1>
+						update Emp info:
+					</h1>
+					<form action="emplist.html" method="post">
+						<table cellpadding="0" cellspacing="0" border="0"
+							class="form_table">
+							<tr>
+								<td valign="middle" align="right">
+									id:
+								</td>
+								<td valign="middle" align="left">
+									{{emp.id}}
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									name:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" v-model="emp.name" value="zhangshan"/>
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									oldphoto:
+								</td>
+								<td valign="middle" align="left">
+									<img :src="emp.path" style="height: 20px; width: 40px" alt="">
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									salary:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" v-model="emp.salary" value="20000"/>
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="left">
+									photo
+								</td>
+								<td valign="middle" align="left">
+									<input type="file" ref="photo"/>
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									age:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" v-model="emp.age" value="20"/>
+								</td>
+							</tr>
+						</table>
+						<p>
+							<input type="button" @click="editEmp" class="button" value="Confirm" />
+						</p>
+					</form>
+				</div>
+			</div>
+			<div id="footer">
+				<div id="footer_bg">
+					ABC@126.com
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+<script src="/ems_vue/js/vue.js"></script>
+<script src="/ems_vue/js/axios.min.js"></script>
+<script>
+	var app = new Vue({
+		el: "#wrap",
+		data: {  //数据
+			user: {
+				realname: "",
+			},//用来存放用户登录信息
+			emp: {
+
+			}
+
+		},
+		methods: { //自定义函数
+			//处理安全退出
+			logout() {
+				localStorage.removeItem("user");
+				location.reload(true);//刷新页面
+			},
+			//处理员工信息
+			editEmp() {
+				var formData = new FormData();
+				formData.append('path',this.emp.path);
+				formData.append("id",this.emp.id);
+				formData.append("name",this.emp.name);
+				formData.append("salary",this.emp.salary);
+				formData.append("age",this.emp.age);
+				formData.append("photo",this.$refs.photo.files[0]);
+
+				var _this = this;
+				axios({
+					method:"post",
+					url:"http://localhost:8989/ems_vue/emp/update",
+					data: formData,
+					headers:{
+						'content-type':'multipart/form-data'
+					}
+				}).then(res=>{
+					console.log(res.data);
+					if (res.data.state) {
+						if (window.confirm(res.data.msg+"点击确定跳转列表页面")) {
+							location.href="/ems_vue/emplist.html";
+						}
+					} else {
+						alert(res.data.msg);
+					}
+				});
+			}
+
+		},
+		created() {//生命周期函数
+			var userString = localStorage.getItem("user");
+			if (userString) {
+				this.user = JSON.parse(userString);
+			} else {
+				alert("您尚未登录,点击确定跳转至登录页面!");
+
+				location.href = "/ems_vue/login.html";
+			}
+			//获取对应id信息
+			var start = location.href.lastIndexOf("=");
+			//截取 ID
+			var id = location.href.substring(start+1);
+			console.log(id);
+			var _this = this;
+			//查询个人信息
+			axios.get("http://localhost:8989/ems_vue/emp/findOne?id="+id).then(res=>{
+				console.log(res.data);
+				_this.emp = res.data;
+			})
+		}
+	})
+</script>

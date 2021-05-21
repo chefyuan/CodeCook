@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<!--和权限一致-->
+<mapper namespace="com.baizhi.dao.UserDAO">
+<!--paramterType参数类型-->
+<insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+    insert  into t_user values (#{id},#{username},#{realname},#{password},#{sex},#{status},#{regeistTime});
+</insert>
+    <select id="findByUsername" parameterType="String" resultType="User">
+        select id,username,realname,password,sex,status,regsterTime from t_user where username = #{username};
+    </select>
+
+</mapper>

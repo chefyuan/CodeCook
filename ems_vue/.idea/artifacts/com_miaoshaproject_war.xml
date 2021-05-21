@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="com.miaoshaproject:war">
+    <output-path>$PROJECT_DIR$/../秋招笔记/Spring/codes/com.miaoshaproject/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>com.miaoshaproject</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="com.miaoshaproject-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="com.miaoshaproject:war exploded" />
+    </root>
+  </artifact>
+</component>
